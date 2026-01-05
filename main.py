@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 import matplotlib.pyplot as plt
 
@@ -55,6 +56,10 @@ dt=DecisionTreeClassifier()
 dt.fit(X_train,y_train)
 predict_dt=dt.predict(X_test)
 
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+rf.fit(X_train, y_train)
+predict_rf = rf.predict(X_test)
+
 print("KNN Results:")
 print("Accuracy:", accuracy_score(y_test, predict_knn))
 print("Precision:", precision_score(y_test, predict_knn, average='weighted'))
@@ -73,10 +78,16 @@ print("Precision:", precision_score(y_test, predict_dt, average='weighted'))
 print("Recall:", recall_score(y_test, predict_dt, average='weighted'))
 print("F1-Score:", f1_score(y_test, predict_dt, average='weighted'))
 
+print("Random Forest Results:")
+print("Accuracy:", accuracy_score(y_test, predict_rf))
+print("Precision:", precision_score(y_test, predict_rf, average='weighted'))
+print("Recall:", recall_score(y_test, predict_rf, average='weighted'))
+print("F1-Score:", f1_score(y_test, predict_rf, average='weighted'))
+
 cm_knn = confusion_matrix(y_test, predict_knn)
 cm_lr = confusion_matrix(y_test, predict_lr)
 cm_dt = confusion_matrix(y_test, predict_dt)
-
+cm_rf = confusion_matrix(y_test, predict_rf)
 
 #Now, lets visualize all these:
 plt.figure(figsize=(8, 5))
@@ -86,11 +97,12 @@ plt.ylabel('Count')
 plt.title('Class Distribution')
 plt.show()
 
-algorithms = ['KNN', 'Logistic Regression', 'Decision Tree']
+algorithms = ['KNN', 'Logistic Regression', 'Decision Tree', 'Random Forest']
 accuracies = [
     accuracy_score(y_test, predict_knn),
     accuracy_score(y_test, predict_lr),
-    accuracy_score(y_test, predict_dt)
+    accuracy_score(y_test, predict_dt),
+    accuracy_score(y_test, predict_rf)
 ]
 
 plt.figure(figsize=(8, 5))
@@ -132,4 +144,15 @@ for i in range(10):
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.title('Decision Tree Confusion Matrix')
+plt.show()
+
+plt.figure(figsize=(6, 5))
+plt.imshow(cm_rf, cmap='Purples')
+plt.colorbar()
+for i in range(10):
+    for j in range(10):
+        plt.text(j, i, cm_rf[i, j], ha='center', va='center', color='white' if cm_rf[i, j] > cm_rf.max()/2 else 'black')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('Random Forest Confusion Matrix')
 plt.show()
