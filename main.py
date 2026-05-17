@@ -12,6 +12,24 @@ print(f"Dataset Shape: {dataset.shape}")
 pd.set_option("display.max_columns",5)
 print(dataset.head(5))
 
+print("=== DATASET BEFORE PREPROCESSING ===")
+print(dataset.head(10))
+print(f"Shape: {dataset.shape}")
+print(f"Missing Values:\n{dataset.isnull().sum()}")
+print(f"Duplicates: {dataset.duplicated().sum()}")
+
+dataset = dataset.drop_duplicates()
+print(f"Shape after removing duplicates: {dataset.shape}")
+
+# Handle missing values (fill with column mean if any exist)
+dataset = dataset.fillna(dataset.mean())
+print("Missing values after handling:", dataset.isnull().sum().sum())
+
+# No categorical columns in this dataset
+# Example of how it would be done for categorical data:
+# dataset['some_col'] = pd.Categorical(dataset['some_col']).codes
+print("No categorical columns to encode in this dataset.")
+
 labels=dataset.iloc[:,0].values
 pixels=dataset.iloc[:,1:].values
 print(f"Total Length: {len(labels)}")
@@ -27,6 +45,12 @@ for digit, count in zip(unique, counts):
 
 pixels = pixels / 255.0
 print(f"Pixels scaled to range [0, 1]")
+
+print("=== DATASET AFTER PREPROCESSING ===")
+print(pd.DataFrame(pixels).head(10))
+print(f"Shape: {pixels.shape}")
+print(f"Missing Values: {pd.DataFrame(pixels).isnull().sum().sum()}")
+print(f"Duplicates: {pd.DataFrame(pixels).duplicated().sum()}")
 
 split_ratio=0.7
 split_index=int(len(labels)*split_ratio)
